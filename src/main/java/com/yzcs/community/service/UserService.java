@@ -38,6 +38,7 @@ public class UserService implements CommunityConstant {
         return userMapper.selectById(id);
     }
 
+    // TODO:  发送邮件可以采用多线程的方式处理，以提高响应速度。
     public Map<String, Object> register(User user) {
         Map<String, Object> map = new HashMap<>();
 
