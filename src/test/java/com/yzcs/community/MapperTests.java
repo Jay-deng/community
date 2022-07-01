@@ -80,6 +80,13 @@ public class MapperTests {
         System.out.println(rows);
     }
 
+    @Test
+    public void testAddPost() {
+        DiscussPost discussPost = new DiscussPost();
+
+
+    }
+
 
     @Test
     public void testInsertLoginTicket() {
