@@ -40,12 +40,17 @@ public class HomeController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("post", post);
                 User user = userService.findUserById(post.getUserId());
-                map.put("user",user);
+                map.put("user", user);
 
                 discussPosts.add(map);
             }
         }
         model.addAttribute("discussPosts", discussPosts);
         return "/index"; // 返回template下的index.html
+    }
+
+    @RequestMapping(path = "/error", method = RequestMethod.GET)
+    public String getErrorPage() {
+        return "/error/500";
     }
 }
