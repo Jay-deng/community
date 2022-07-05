@@ -127,7 +127,7 @@
             <!-- 回帖列表 -->
             <ul class="list-unstyled mt-4">
                 <li class="media pb-3 pt-3 mb-3 border-bottom" th:each="cvo:${comments}">
-                    <a>
+                    <a th:href="@{|/user/profile/${cvo.user.id}|}">
                         <img th:src="${cvo.user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header"
                              alt="用户头像">
                     </a>
@@ -161,13 +161,14 @@
                         <ul class="list-unstyled mt-4 bg-gray p-3 font-size-12 text-muted">
                             <li class="pb-3 pt-3 mb-3 border-bottom" th:each="rvo:${cvo.replys}">
                                 <div>
-										<span th:if="${rvo.target==null}">
-											<b class="text-info" th:utext="${rvo.user.username}">寒江雪</b>:&nbsp;&nbsp;
-										</span>
+                                    <span th:if="${rvo.target==null}">
+                                                <b class="text-info" th:utext="${rvo.user.username}">寒江雪</b>:&nbsp;&nbsp;
+                                    </span>
                                     <span th:if="${rvo.target!=null}">
-											<i class="text-info" th:utext="${rvo.user.username}">Sissi</i> 回复
-											<b class="text-info" th:utext="${rvo.target.username}">寒江雪</b>:&nbsp;&nbsp;
-										</span>
+                                            <i class="text-info" th:utext="${rvo.user.username}">Sissi</i> 回复
+
+                                            <b class="text-info" th:utext="${rvo.target.username}">寒江雪</b>:&nbsp;&nbsp;
+                                    </span>
                                     <span th:utext="${rvo.reply.content}">这个是直播时间哈，觉得晚的话可以直接看之前的完整录播的~</span>
                                 </div>
                                 <div class="mt-3">
