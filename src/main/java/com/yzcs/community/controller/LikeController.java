@@ -1,5 +1,6 @@
 package com.yzcs.community.controller;
 
+import com.yzcs.community.annotation.LoginRequired;
 import com.yzcs.community.entity.User;
 import com.yzcs.community.service.LikeService;
 import com.yzcs.community.service.UserService;
