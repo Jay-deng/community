@@ -2,8 +2,10 @@ package com.yzcs.community.controller;
 
 import com.yzcs.community.entity.Comment;
 import com.yzcs.community.entity.DiscussPost;
+import com.yzcs.community.entity.Event;
 import com.yzcs.community.entity.Page;
 import com.yzcs.community.entity.User;
+import com.yzcs.community.event.EventProducer;
 import com.yzcs.community.service.CommentService;
 import com.yzcs.community.service.DiscussPostService;
 import com.yzcs.community.service.LikeService;
@@ -12,6 +14,7 @@ import com.yzcs.community.util.CommunityConstant;
 import com.yzcs.community.util.CommunityUtil;
 import com.yzcs.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +45,12 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title, String content) {
@@ -55,7 +64,17 @@ public class DiscussPostController implements CommunityConstant {
         post.setTitle(title);
         post.setContent(content);
         post.setCreateTime(new Date());
+        // type和status默认为0
         discussPostService.addDiscussPost(post);
+
+        //触发发帖事件,post存到es服务器里，交给kafka来异步实现
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+
+        eventProducer.fireEvent(event);
 
         // TODO: 报错的情况， 将来统一处理
         return CommunityUtil.getJSONString(0, "发布成功！");

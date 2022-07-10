@@ -1,8 +1,11 @@
 package com.yzcs.community.event;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yzcs.community.entity.DiscussPost;
 import com.yzcs.community.entity.Event;
 import com.yzcs.community.entity.Message;
+import com.yzcs.community.service.DiscussPostService;
+import com.yzcs.community.service.ElasticsearchService;
 import com.yzcs.community.service.MessageService;
 import com.yzcs.community.util.CommunityConstant;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -23,6 +26,12 @@ public class EventConsumer implements CommunityConstant {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_FOLLOW, TOPIC_LIKE})
     public void handleCommentMessage(ConsumerRecord record) {
@@ -61,4 +70,39 @@ public class EventConsumer implements CommunityConstant {
     }
 
 
+    //帖子有增加或更改，es服务器要增添或更改
+    @KafkaListener(topics = {TOPIC_PUBLISH})
+    public void handlePublishMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息为空！");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息的格式不对！");
+            return;
+        }
+
+        DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
+        elasticsearchService.saveDiscussPost(post);
+    }
+
+    //删帖
+    @KafkaListener(topics = {TOPIC_DELETE})
+    public void handleDeleteMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息为空！");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息的格式错误！");
+            return;
+        }
+
+        elasticsearchService.deleteDiscussPost(event.getEntityId());
+    }
 }
+

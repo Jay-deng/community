@@ -31,6 +31,13 @@ public interface CommunityConstant {
     // kafka主题：关注
     String TOPIC_FOLLOW = "follow";
 
+    // kafka主题：发帖
+    String TOPIC_PUBLISH = "publish";
+
+    // kafka主题：删除帖子
+    String TOPIC_DELETE = "delete";
+
+
     // 系统用户ID
     int SYSTEM_USER_ID = 1;
 
