@@ -12,14 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -211,7 +209,7 @@ public class UserService implements CommunityConstant {
         return (User) redisTemplate.opsForValue().get(redisKey);
     }
 
-    // 取不到时初始化缓存数据
+    // 2. 取不到时初始化缓存数据
     private User initCache(int userId) {
         User user = userMapper.selectById(userId);
         String redisKey = RedisKeyUtil.getUserKey(userId);
@@ -220,10 +218,30 @@ public class UserService implements CommunityConstant {
 
     }
 
-    // 数据变更时清除缓存数据
+    // 3. 数据变更时清除缓存数据
     private void clearCache(int userId) {
         String redisKey = RedisKeyUtil.getUserKey(userId);
         redisTemplate.delete(redisKey);
+    }
+
+    //用户认证逻辑采用自己的实现，绕过spring security，认证信息需存到SecurityContext里
+    public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
+        User user = this.findUserById(userId);
+        List<GrantedAuthority> list = new ArrayList<>();
+        list.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                switch (user.getType()) {
+                    case 0:
+                        return AUTHORITY_USER;
+                    case 1:
+                        return AUTHORITY_ADMIN;
+                    default:
+                        return AUTHORITY_MODERATOR;
+                }
+            }
+        });
+        return list;
     }
 
 
