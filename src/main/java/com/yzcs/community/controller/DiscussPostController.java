@@ -199,11 +199,11 @@ public class DiscussPostController implements CommunityConstant {
 
         eventProducer.fireEvent(event);
 
+
+        return CommunityUtil.getJSONString(0);
 //        //加精要帖子加分
 //        String redisKey = RedisKeyUtil.getPostScoreKey();
 //        redisTemplate.opsForSet().add(redisKey, id);
-
-        return CommunityUtil.getJSONString(0);
     }
 
 

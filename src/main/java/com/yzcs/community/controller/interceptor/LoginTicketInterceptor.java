@@ -61,9 +61,11 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        if (hostHolder.getUser() == null) {
-            SecurityContextHolder.clearContext();
-        }
+        // TODO: https://www.nowcoder.com/study/live/246/7/3
+        //  暂时的解决办法。。。
+//        if (hostHolder.getUser() == null) {
+//            SecurityContextHolder.clearContext();
+//        }
         hostHolder.clear();
     }
 }
