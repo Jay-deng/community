@@ -6,7 +6,11 @@ import com.yzcs.community.Dao.UserMapper;
 import com.yzcs.community.entity.DiscussPost;
 import com.yzcs.community.entity.User;
 import com.yzcs.community.util.CommunityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -35,6 +39,9 @@ public class AlphaService {
 
     @Autowired
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private static final Logger logger = LoggerFactory.getLogger(AlphaService.class);
 
     public String find() {
         return alphaDao.select();
@@ -121,5 +128,17 @@ public class AlphaService {
         });
     }
 
+
+    // 让该方法能在多线程环境下，被异步调用
+    @Async
+    public void execute1() {
+        logger.debug("exexute1");
+    }
+
+    // 定时调用该方法，多线程环境
+    @Scheduled(initialDelay = 10000, fixedRate = 1000)
+    public void execute2() {
+        logger.debug("execute2");
+    }
 
 }
