@@ -77,6 +77,10 @@ public class DiscussPostController implements CommunityConstant {
 
         eventProducer.fireEvent(event);
 
+        //给每个新帖一个初始分，因此每个新帖都要算分
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, post.getId());
+
         // TODO: 报错的情况， 将来统一处理
         return CommunityUtil.getJSONString(0, "发布成功！");
     }
@@ -199,11 +203,12 @@ public class DiscussPostController implements CommunityConstant {
 
         eventProducer.fireEvent(event);
 
+        // 加精要帖子加分
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, id);
 
         return CommunityUtil.getJSONString(0);
-//        //加精要帖子加分
-//        String redisKey = RedisKeyUtil.getPostScoreKey();
-//        redisTemplate.opsForSet().add(redisKey, id);
+
     }
 
 

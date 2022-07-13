@@ -136,9 +136,9 @@ public class AlphaService {
     }
 
     // 定时调用该方法，多线程环境
-    @Scheduled(initialDelay = 10000, fixedRate = 1000)
-    public void execute2() {
-        logger.debug("execute2");
-    }
+//    @Scheduled(initialDelay = 10000, fixedRate = 1000)
+//    public void execute2() {
+//        logger.debug("execute2");
+//    }
 
 }
