@@ -31,7 +31,8 @@ public class HomeController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
-    @RequestMapping(path = "/index", method = RequestMethod.GET)
+
+    @RequestMapping(path = {"/", "/index"}, method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page,
                                @RequestParam(name = "orderMode", defaultValue = "0") int orderMode) {
 
@@ -59,7 +60,7 @@ public class HomeController implements CommunityConstant {
         }
         model.addAttribute("discussPosts", discussPosts);
         model.addAttribute("orderMode", orderMode);
-        return "/index"; // 返回template下的index.html
+        return "/index"; // 返回template下的index.html // 7.19 去掉了"/"
     }
 
     @RequestMapping(path = "/error", method = RequestMethod.GET)
